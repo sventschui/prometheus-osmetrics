@@ -9,7 +9,7 @@ on:
     - "*"
 
 jobs:
-  docker-build:
+  docker:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
