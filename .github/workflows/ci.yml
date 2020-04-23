@@ -35,9 +35,9 @@ jobs:
       with:
       node-version: 13.x
     - name: yarn
-      shell: yarn install --frozen-lockfile
+      run: yarn install --frozen-lockfile
     - name: test
-      shell: yarn jest --coverage
+      run: yarn jest --coverage
     - name: Coveralls
       uses: coverallsapp/github-action@master
       with:
