@@ -43,7 +43,7 @@ jobs:
           DOCKER_TOKEN: ${{secrets.docker_token}}
         run: |
           set -eo pipefail
-          echo "$DOCKER_TOKEN" docker login -u sventschui --password-stdin
+          echo "$DOCKER_TOKEN" | docker login -u sventschui --password-stdin
           docker build . -t sventschui/prometheus-osmetrics:${{ github.event.release.tag_name }}
           docker push sventschui/prometheus-osmetrics:${{ github.event.release.tag_name }}
 
