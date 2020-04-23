@@ -16,8 +16,10 @@ module.exports = async function collectSettings (env, logger) {
   let osApi = env.OS_API
   if (!osApi) {
     if (env.KUBERNETES_SERVICE_HOST) {
-      logger.info('Using KUBERNETES_SERVICE_HOST as a fallback since OS_API variable is not set');
-      osApi = `https://${env.KUBERNETES_SERVICE_HOST}`;
+      logger.info(
+        'Using KUBERNETES_SERVICE_HOST as a fallback since OS_API variable is not set'
+      )
+      osApi = `https://${env.KUBERNETES_SERVICE_HOST}`
     } else {
       throw new Error('Please set the OS_API env variable!')
     }

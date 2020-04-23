@@ -41,7 +41,7 @@ module.exports = function createServer ({
       schema: {
         querystring: {
           type: 'object',
-          required: ["namespace"],
+          required: ['namespace'],
           properties: {
             namespace: {
               oneOf: [
