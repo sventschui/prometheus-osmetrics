@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - "master"
+  pull_request:
+    branches:
+    - "*"
+
+jobs:
+  build:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+    - uses: rokroskar/workflow-run-cleanup-action@master	
+      env:	
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"	
+      if: "github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop'"
+      timeout-minutes: 2
+    - uses: actions/checkout@2
+      timeout-minutes: 2
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir-path
+      run: echo "::set-output name=dir::$(yarn cache dir)"
+    - uses: actions/cache@v1
+      id: yarn-cache
+      with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+    - name: Use Node.js 13.x
+        uses: actions/setup-node@v1
+        with:
+        node-version: 13.x
+    - name: yarn
+      shell: yarn install --frozen-lockfile
+    - name: test
+      shell: yarn jest --coverage
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
