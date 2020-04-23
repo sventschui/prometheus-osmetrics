@@ -25,4 +25,6 @@ RUN adduser -D -H -s /bin/false prometheus-osmetrics \
 
 USER prometheus-osmetrics
 
+ENV NODE_ENV=production
+
 COPY --from=build --chown="prometheus-osmetrics:prometheus-osmetrics" /nodeapp /nodeapp
