@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon --watch src/ src/index.js",
-    "lint": "tsc",
+    "lint": "tsc && prettier-standard --lint --check",
     "test": "jest --coverage --collectCoverageFrom 'src/**/*.js'"
   },
   "dependencies": {
@@ -23,6 +23,7 @@
     "@types/node-fetch": "^2.5.6",
     "jest-fetch-mock": "^3.0.3",
     "nodemon": "^2.0.3",
+    "prettier-standard": "^16.2.1",
     "typescript": "^3.8.3"
   }
 }
