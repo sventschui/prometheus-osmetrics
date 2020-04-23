@@ -56,6 +56,7 @@ async function fetchPodCpuUsageRate ({ pod, accessToken, osMetricApi }) {
             name
           )}/raw?limit=1`,
           {
+            timeout: 10000,
             headers: {
               Authorization: `Bearer ${accessToken}`,
               'Hawkular-Tenant': pod.metadata.namespace,
@@ -120,6 +121,7 @@ async function fetchPodMemoryUsage ({ pod, accessToken, osMetricApi }) {
             name
           )}/raw?limit=1`,
           {
+            timeout: 10000,
             headers: {
               Authorization: `Bearer ${accessToken}`,
               'Hawkular-Tenant': pod.metadata.namespace,

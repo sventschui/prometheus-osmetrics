@@ -8,8 +8,6 @@ const logger = pino({
   } : false,
 });
 
-console.log(process.argv)
-
 const start = async () => {
   let options;
   try {

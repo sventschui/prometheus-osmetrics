@@ -41,6 +41,7 @@ module.exports = async function listPods ({ osApi, accessToken, namespace }) {
   const response = await fetch(
     `${osApi}/api/v1/namespaces/${encodeURIComponent(namespace)}/pods`,
     {
+      timeout: 10000,
       headers: {
         Authorization: `Bearer ${accessToken}`,
         Accept: 'application/json'
