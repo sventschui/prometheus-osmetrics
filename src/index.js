@@ -18,7 +18,6 @@ if (!accessToken) {
     process.exit(-1);
 }
 
-
 const start = async () => {
   const server = createServer({
       fastifyOptions: {

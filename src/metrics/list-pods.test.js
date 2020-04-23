@@ -20,7 +20,13 @@ describe("list-pods", () => {
                   name: 'my-pod',
                   namespace,
                   selfLink: `/api/v1/namespaces/${namespace}/pods/my-pod`
-              }
+              },
+              containers: [{
+                  name: 'my-container'
+              }],
+              status: {
+                  phase: 'Running',
+              },
           }],
         }),
       };
@@ -32,8 +38,10 @@ describe("list-pods", () => {
       namespace,
     });
 
-    expect(pods.length).toEqual(1);
-    // should unwrap metadata to the root
-    expect(pods[0]).toHaveProperty('name', 'my-pod');
+    expect(pods).toHaveProperty('length', 1);
+    expect(pods).toHaveProperty('0.metadata.name', 'my-pod');
+    expect(pods).toHaveProperty('0.status.phase', 'Running');
+    expect(pods).toHaveProperty('0.containers.length', 1);
+    expect(pods).toHaveProperty('0.containers.0.name', 'my-container');
   });
 });
