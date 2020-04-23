@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon --watch src/ src/index.js",
+    "lint": "tsc",
     "test": "jest --coverage --collectCoverageFrom 'src/**/*.js'"
   },
   "dependencies": {
