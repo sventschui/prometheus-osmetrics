@@ -1,3 +1,4 @@
+const fs = require('fs');
 const createServer = require('./server');
 
 const osApi = process.env.OS_API;
@@ -12,9 +13,11 @@ if (!osMetricApi) {
     process.exit(-1);
 }
 
-const accessToken = process.env.OS_ACCESS_TOKEN;
+const accessToken = process.env.OS_ACCESS_TOKEN_FILE
+    ? fs.readFileSync(process.env.OS_ACCESS_TOKEN_FILE, 'utf8')
+    : process.env.OS_ACCESS_TOKEN;
 if (!accessToken) {
-    console.error('Please set the OS_ACCESS_TOKEN env variable!');
+    console.error('Please set the OS_ACCESS_TOKEN or OS_ACCESS_TOKEN_FILE env variable!');
     process.exit(-1);
 }
 
