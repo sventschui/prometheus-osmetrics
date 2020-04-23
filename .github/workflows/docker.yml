@@ -3,18 +3,18 @@ name: Docker
 on:
   push:
     branches:
-      - "master"
+      - 'master'
     paths:
-      - "Dockerfile"
-      - ".dockerignore"
-      - ".github/workflows/docker.yml"
+      - 'Dockerfile'
+      - '.dockerignore'
+      - '.github/workflows/docker.yml'
   pull_request:
     branches:
-      - "*"
+      - '*'
     paths:
-      - "Dockerfile"
-      - ".dockerignore"
-      - ".github/workflows/docker.yml"
+      - 'Dockerfile'
+      - '.dockerignore'
+      - '.github/workflows/docker.yml'
 
 jobs:
   docker:
@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: rokroskar/workflow-run-cleanup-action@master
         env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         if: "github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop'"
         timeout-minutes: 2
       - uses: actions/checkout@v2
