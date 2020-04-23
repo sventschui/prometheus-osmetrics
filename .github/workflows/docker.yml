@@ -7,12 +7,14 @@ on:
     paths:
     - 'Dockerfile'
     - '.dockerignore'
+    - '.github/workflows/docker.yml'
   pull_request:
     branches:
     - "*"
     paths:
     - 'Dockerfile'
     - '.dockerignore'
+    - '.github/workflows/docker.yml'
 
 jobs:
   docker:
