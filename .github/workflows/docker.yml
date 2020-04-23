@@ -4,9 +4,15 @@ on:
   push:
     branches:
     - "master"
+    paths:
+    - 'Dockerfile'
+    - '.dockerignore'
   pull_request:
     branches:
     - "*"
+    paths:
+    - 'Dockerfile'
+    - '.dockerignore'
 
 jobs:
   docker:
