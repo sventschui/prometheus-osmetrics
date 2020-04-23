@@ -1,6 +1,7 @@
 const PromisePool = require('es6-promise-pool')
 const fetch = require('node-fetch').default
 const listPods = require('./list-pods')
+const parseMemory = require('./parse-memory')
 
 /**
  * @param {import('node-fetch').Response} response
@@ -158,21 +159,70 @@ async function fetchPodMemoryUsage ({ pod, accessToken, osMetricApi, agent }) {
 
         const memoryUsage = body[0]
 
-        return {
-          name: 'osmetrics_pod_memory_usage_bytes',
-          labels: {
-            pod: pod.metadata.name,
-            container: container.name,
-            namespace: pod.metadata.namespace
-          },
-          type: 'gauge',
-          help: 'Pod Memory Usage',
-          value: memoryUsage.value,
-          timestamp: memoryUsage.timestamp
+        /**
+         * @type {Array<import('./serialize').PrometheusMetric>}
+         */
+        const metrics = [
+          {
+            name: 'osmetrics_pod_memory_usage_bytes',
+            labels: {
+              pod: pod.metadata.name,
+              container: container.name,
+              namespace: pod.metadata.namespace
+            },
+            type: 'gauge',
+            help: 'Pod Memory Usage',
+            value: memoryUsage.value,
+            timestamp: memoryUsage.timestamp
+          }
+        ]
+
+        if (
+          container.resources &&
+          container.resources.limits &&
+          container.resources.limits.memory
+        ) {
+          const spec = parseMemory(container.resources.limits.memory)
+          metrics.push({
+            name: 'osmetrics_pod_memory_usage_limits_rate',
+            labels: {
+              pod: pod.metadata.name,
+              container: container.name,
+              namespace: pod.metadata.namespace
+            },
+            type: 'gauge',
+            help: 'Pod Memory Usage',
+            value: memoryUsage.value / spec,
+            timestamp: memoryUsage.timestamp
+          })
         }
+
+        if (
+          container.resources &&
+          container.resources.requests &&
+          container.resources.requests.memory
+        ) {
+          const spec = parseMemory(container.resources.requests.memory)
+          metrics.push({
+            name: 'osmetrics_pod_memory_usage_requests_rate',
+            labels: {
+              pod: pod.metadata.name,
+              container: container.name,
+              namespace: pod.metadata.namespace
+            },
+            type: 'gauge',
+            help: 'Pod Memory Usage',
+            value: memoryUsage.value / spec,
+            timestamp: memoryUsage.timestamp
+          })
+        }
+
+        return metrics
       })
     )
-  ).filter(Boolean)
+  )
+    .filter(Boolean)
+    .reduce((accum, item) => accum.concat(item), [])
 }
 
 /**

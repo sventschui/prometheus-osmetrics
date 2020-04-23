@@ -12,6 +12,19 @@ const fetch = require('node-fetch').default
 /**
  * @typedef {Object} ContainerSpec
  * @property {string} name
+ * @property {ContainerResourcesSpec} resources
+ */
+
+/**
+ * @typedef {Object} ContainerResourcesSpec
+ * @property {?ContainerResourceSpec} limits
+ * @property {?ContainerResourceSpec} requests
+ */
+
+/**
+ * @typedef {Object} ContainerResourceSpec
+ * @property {?(string|number)} cpu
+ * @property {?(string|number)} memory
  */
 
 /**
