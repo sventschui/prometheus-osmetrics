@@ -93,7 +93,7 @@ async function fetchPodCpuUsageRate({ pod, accessToken, osMetricApi }) {
 
 /**
  * @param {FetchMetricOptions} options
- * @returns {Promise<Array<import('./serialize').PrometheusMetric>>>}
+ * @returns {Promise<Array<import('./serialize').PrometheusMetric>>}
  */
 async function fetchPodMemoryUsage({ pod, accessToken, osMetricApi }) {
     return (await Promise.all(pod.spec.containers.map(async (container) => {
