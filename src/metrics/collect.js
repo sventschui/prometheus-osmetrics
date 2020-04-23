@@ -27,6 +27,7 @@ async function safeJson (response) {
  * @property {string} osMetricApi
  * @property {string} osApi
  * @property {string} accessToken
+ * @property {?import('https').Agent} agent
  */
 
 /**
@@ -34,6 +35,7 @@ async function safeJson (response) {
  * @property {import('./list-pods').PodInfo} pod
  * @property {string} osMetricApi
  * @property {string} accessToken
+ * @property {?import('https').Agent} agent
  */
 
 /**
@@ -46,7 +48,7 @@ async function safeJson (response) {
  * @param {FetchMetricOptions} options
  * @returns {Promise<Array<import('./serialize').PrometheusMetric>>}
  */
-async function fetchPodCpuUsageRate ({ pod, accessToken, osMetricApi }) {
+async function fetchPodCpuUsageRate ({ pod, accessToken, osMetricApi, agent }) {
   return (
     await Promise.all(
       pod.spec.containers.map(async container => {
@@ -61,7 +63,8 @@ async function fetchPodCpuUsageRate ({ pod, accessToken, osMetricApi }) {
               Authorization: `Bearer ${accessToken}`,
               'Hawkular-Tenant': pod.metadata.namespace,
               Accept: 'application/json'
-            }
+            },
+            agent
           }
         )
 
@@ -111,7 +114,7 @@ async function fetchPodCpuUsageRate ({ pod, accessToken, osMetricApi }) {
  * @param {FetchMetricOptions} options
  * @returns {Promise<Array<import('./serialize').PrometheusMetric>>}
  */
-async function fetchPodMemoryUsage ({ pod, accessToken, osMetricApi }) {
+async function fetchPodMemoryUsage ({ pod, accessToken, osMetricApi, agent }) {
   return (
     await Promise.all(
       pod.spec.containers.map(async container => {
@@ -126,7 +129,8 @@ async function fetchPodMemoryUsage ({ pod, accessToken, osMetricApi }) {
               Authorization: `Bearer ${accessToken}`,
               'Hawkular-Tenant': pod.metadata.namespace,
               Accept: 'application/json'
-            }
+            },
+            agent
           }
         )
 
@@ -181,7 +185,8 @@ module.exports = async function collectMetrics (options) {
       listPods({
         osApi: options.osApi,
         namespace,
-        accessToken: options.accessToken
+        accessToken: options.accessToken,
+        agent: options.agent
       })
     )
   )
@@ -206,12 +211,14 @@ module.exports = async function collectMetrics (options) {
       fetchPodCpuUsageRate({
         pod,
         osMetricApi: options.osMetricApi,
-        accessToken: options.accessToken
+        accessToken: options.accessToken,
+        agent: options.agent
       }),
       fetchPodMemoryUsage({
         pod,
         osMetricApi: options.osMetricApi,
-        accessToken: options.accessToken
+        accessToken: options.accessToken,
+        agent: options.agent
       })
     ])
 

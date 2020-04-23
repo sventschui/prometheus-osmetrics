@@ -2,6 +2,7 @@ const os = require('os')
 const fs = require('fs')
 const path = require('path')
 const pino = require('pino')
+const https = require('https')
 const collectSettings = require('./collect-settings')
 
 const logger = pino()
@@ -45,7 +46,8 @@ describe('collect-settings', () => {
     ).toEqual({
       osApi: 'foo',
       osMetricApi: 'bar',
-      accessToken: 'baz'
+      accessToken: 'baz',
+      agent: null
     })
   })
 
@@ -64,7 +66,8 @@ describe('collect-settings', () => {
     ).toEqual({
       osApi: 'foo',
       osMetricApi: 'bar',
-      accessToken: 'baz'
+      accessToken: 'baz',
+      agent: null
     })
   })
 
@@ -74,14 +77,37 @@ describe('collect-settings', () => {
         {
           KUBERNETES_SERVICE_HOST: '127.0.0.1',
           OS_METRIC_API: 'bar',
-          OS_ACCESS_TOKEN: 'baz'
+          OS_ACCESS_TOKEN: 'baz',
+          agent: null
         },
         logger
       )
     ).toEqual({
       osApi: 'https://127.0.0.1',
       osMetricApi: 'bar',
-      accessToken: 'baz'
+      accessToken: 'baz',
+      agent: null
+    })
+  })
+
+  it('should return custom agent when OS_CERTIFICATE_AUTHORITY is set', async () => {
+    const caFilePath = path.join(os.tmpdir(), 'ca')
+    await fs.promises.writeFile(caFilePath, '')
+    expect(
+      await collectSettings(
+        {
+          OS_API: 'foo',
+          OS_METRIC_API: 'bar',
+          OS_ACCESS_TOKEN: 'baz',
+          OS_CERTIFICATE_AUTHORITY: caFilePath
+        },
+        logger
+      )
+    ).toMatchObject({
+      osApi: 'foo',
+      osMetricApi: 'bar',
+      accessToken: 'baz',
+      agent: expect.any(https.Agent)
     })
   })
 })

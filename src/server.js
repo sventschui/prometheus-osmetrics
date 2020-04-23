@@ -10,6 +10,7 @@ const serializeMetrics = require('./metrics/serialize')
  * @property {string} osMetricApi
  * @property {string} osApi
  * @property {string} accessToken
+ * @property {?import('https').Agent} agent
  * @property {import('pino').Logger} logger
  */
 
@@ -22,6 +23,7 @@ module.exports = function createServer ({
   osMetricApi,
   osApi,
   accessToken,
+  agent,
   logger
 }) {
   const server = fastify({
@@ -68,7 +70,8 @@ module.exports = function createServer ({
             concurrency,
             osMetricApi,
             osApi,
-            accessToken
+            accessToken,
+            agent
           })
         )
       )

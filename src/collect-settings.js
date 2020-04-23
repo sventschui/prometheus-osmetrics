@@ -1,10 +1,12 @@
 const fs = require('fs')
+const https = require('https')
 
 /**
  * @typedef {Object} Settings
  * @property {string} osApi
  * @property {string} osMetricApi
  * @property {string} accessToken
+ * @property {(import('https').Agent|null)} agent
  */
 
 /**
@@ -39,5 +41,12 @@ module.exports = async function collectSettings (env, logger) {
     )
   }
 
-  return { osApi, osMetricApi, accessToken }
+  let agent = null
+  if (env.OS_CERTIFICATE_AUTHORITY) {
+    agent = new https.Agent({
+      ca: await fs.promises.readFile(env.OS_CERTIFICATE_AUTHORITY, 'utf8')
+    })
+  }
+
+  return { osApi, osMetricApi, accessToken, agent }
 }
