@@ -1,0 +1,26 @@
+{
+  "name": "prometheus-osmetrics",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon --watch src/ src/index.js"
+  },
+  "dependencies": {
+    "es6-promise-pool": "^2.5.0",
+    "fastify": "^2.13.1",
+    "fastify-sensible": "^2.1.1",
+    "jest": "^25.4.0",
+    "node-fetch": "^2.6.0",
+    "pino": "^6.2.0",
+    "pino-pretty": "^4.0.0",
+    "supertest": "^4.0.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.2.1",
+    "@types/node-fetch": "^2.5.6",
+    "jest-fetch-mock": "^3.0.3",
+    "nodemon": "^2.0.3",
+    "typescript": "^3.8.3"
+  }
+}
