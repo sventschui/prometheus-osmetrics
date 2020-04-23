@@ -45,7 +45,7 @@ module.exports = async function listPods({ osApi, accessToken, namespace }) {
         },
     });
 
-    if (response.status < 200 || response.status > 299) {
+    if (response.status < 200 || response.status > 299 || response.status == 204) {
         throw new Error(`OS API returned status code ${response.status} for ${response.url}`);
     }
 
@@ -53,6 +53,18 @@ module.exports = async function listPods({ osApi, accessToken, namespace }) {
      * @type {{ kind: string, items: Array<PodInfo>}}
      */
     const body = await response.json();
+
+    if (typeof body !== 'object') {
+        throw new Error(`Expected OS API to return an object but got ${typeof body}`);
+    }
+
+    if (Array.isArray(body)) {
+        throw new Error('Expected OS API to return an object but got an array');
+    }
+
+    if (body == null) {
+        throw new Error(`Expected OS API to return an object but got ${body}`);
+    }
 
     if (body.kind !== 'PodList') {
         throw new Error(`Expected OS API to return a PodList but got ${body.kind}`);
