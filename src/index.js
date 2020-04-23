@@ -1,24 +1,9 @@
 const createServer = require('./server');
-
-const osApi = process.env.OS_API;
-if (!osApi) {
-    console.error('Please set the OS_API env variable!');
-    process.exit(-1);
-}
-
-const osMetricApi = process.env.OS_METRIC_API;
-if (!osMetricApi) {
-    console.error('Please set the OS_METRIC_API env variable!');
-    process.exit(-1);
-}
-
-const accessToken = process.env.OS_ACCESS_TOKEN;
-if (!accessToken) {
-    console.error('Please set the OS_ACCESS_TOKEN env variable!');
-    process.exit(-1);
-}
+const collectSettings = require('./collect-settings');
 
 const start = async () => {
+  const { osApi, osMetricApi, accessToken } = await collectSettings(process.env);
+
   const server = createServer({
       fastifyOptions: {
           logger: {
