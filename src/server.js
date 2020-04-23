@@ -1,7 +1,7 @@
-const fastify = require("fastify");
-const fastifySensible = require('fastify-sensible');
-const collectMetrics = require('./metrics/collect');
-const serializeMetrics = require('./metrics/serialize');
+const fastify = require('fastify')
+const fastifySensible = require('fastify-sensible')
+const collectMetrics = require('./metrics/collect')
+const serializeMetrics = require('./metrics/serialize')
 
 /**
  * @typedef {Object} Options
@@ -15,51 +15,64 @@ const serializeMetrics = require('./metrics/serialize');
 /**
  * @param {Options} options
  */
-module.exports = function createServer({ fastifyOptions = {}, concurrency = 10, osMetricApi, osApi, accessToken }) {
+module.exports = function createServer ({
+  fastifyOptions = {},
+  concurrency = 10,
+  osMetricApi,
+  osApi,
+  accessToken
+}) {
   const server = fastify({
     logger: true,
-    ...fastifyOptions,
-  });
+    ...fastifyOptions
+  })
 
-  server.register(fastifySensible);
+  server.register(fastifySensible)
 
-  server.get("/health", (req, reply) => {
-    reply.send({ status: "ok" });
-  });
+  server.get('/health', (req, reply) => {
+    reply.send({ status: 'ok' })
+  })
 
   server.get(
-    "/metrics",
+    '/metrics',
     {
       schema: {
         querystring: {
-          type: "object",
+          type: 'object',
           required: [],
           properties: {
-            namespace: { // TODO: make required
+            namespace: {
+              // TODO: make required
               oneOf: [
-                { type: "string", minLength: 1 },
+                { type: 'string', minLength: 1 },
                 {
-                  type: "array",
-                  items: { type: "string", minLength: 1 },
-                },
-              ],
+                  type: 'array',
+                  items: { type: 'string', minLength: 1 }
+                }
+              ]
             },
-            excitement: { type: "integer" },
+            excitement: { type: 'integer' }
           },
           additionalProperties: false
-        },
-      },
+        }
+      }
     },
     async (req, reply) => {
-      reply.send(serializeMetrics(await collectMetrics({
-          namespace: Array.isArray(req.query.namespace) ? req.query.namespace : [req.query.namespace],
-          concurrency,
-          osMetricApi,
-          osApi,
-          accessToken,
-      })))
+      reply.send(
+        serializeMetrics(
+          await collectMetrics({
+            namespace: Array.isArray(req.query.namespace)
+              ? req.query.namespace
+              : [req.query.namespace],
+            concurrency,
+            osMetricApi,
+            osApi,
+            accessToken
+          })
+        )
+      )
     }
-  );
+  )
 
-  return server;
-};
+  return server
+}

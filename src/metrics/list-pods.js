@@ -1,4 +1,4 @@
-const fetch = require('node-fetch').default;
+const fetch = require('node-fetch').default
 /**
  * @typedef {Object} PodMetadata
  * @property {string} name
@@ -21,7 +21,7 @@ const fetch = require('node-fetch').default;
 
 /**
  * @typedef {Object} PodInfo
- * @property {PodMetadata} metadata 
+ * @property {PodMetadata} metadata
  * @property {{ containers: Array<ContainerSpec> }} spec
  * @property {PodStatus} status
  */
@@ -37,38 +37,49 @@ const fetch = require('node-fetch').default;
  * @param {Options} options
  * @returns {Promise<Array<PodInfo>>}
  */
-module.exports = async function listPods({ osApi, accessToken, namespace }) {
-    const response = await fetch(`${osApi}/api/v1/namespaces/${encodeURIComponent(namespace)}/pods`, {
-        headers: {
-            Authorization: `Bearer ${accessToken}`,
-            Accept: 'application/json',
-        },
-    });
-
-    if (response.status < 200 || response.status > 299 || response.status == 204) {
-        throw new Error(`OS API returned status code ${response.status} for ${response.url}`);
+module.exports = async function listPods ({ osApi, accessToken, namespace }) {
+  const response = await fetch(
+    `${osApi}/api/v1/namespaces/${encodeURIComponent(namespace)}/pods`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: 'application/json'
+      }
     }
+  )
 
-    /**
-     * @type {{ kind: string, items: Array<PodInfo>}}
-     */
-    const body = await response.json();
+  if (
+    response.status < 200 ||
+    response.status > 299 ||
+    response.status === 204
+  ) {
+    throw new Error(
+      `OS API returned status code ${response.status} for ${response.url}`
+    )
+  }
 
-    if (typeof body !== 'object') {
-        throw new Error(`Expected OS API to return an object but got ${typeof body}`);
-    }
+  /**
+   * @type {{ kind: string, items: Array<PodInfo>}}
+   */
+  const body = await response.json()
 
-    if (Array.isArray(body)) {
-        throw new Error('Expected OS API to return an object but got an array');
-    }
+  if (typeof body !== 'object') {
+    throw new Error(
+      `Expected OS API to return an object but got ${typeof body}`
+    )
+  }
 
-    if (body == null) {
-        throw new Error(`Expected OS API to return an object but got ${body}`);
-    }
+  if (Array.isArray(body)) {
+    throw new Error('Expected OS API to return an object but got an array')
+  }
 
-    if (body.kind !== 'PodList') {
-        throw new Error(`Expected OS API to return a PodList but got ${body.kind}`);
-    }
+  if (body == null) {
+    throw new Error(`Expected OS API to return an object but got ${body}`)
+  }
 
-    return body.items;
+  if (body.kind !== 'PodList') {
+    throw new Error(`Expected OS API to return a PodList but got ${body.kind}`)
+  }
+
+  return body.items
 }
