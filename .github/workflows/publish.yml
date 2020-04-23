@@ -1,0 +1,50 @@
+name: publish
+
+on:
+  release:
+    types: [created, published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v2
+
+      - name: fetch git tags
+        run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
+
+      - name: setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: https://registry.npmjs.org/
+
+      - name: yarn install
+        run: yarn install --frozen-lockfile
+
+      - name: npm version
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GtiHub Actions"
+
+          git tag -d "${{ github.event.release.tag_name }}"
+
+          npm version "${{ github.event.release.tag_name }}"
+
+      - name: npm publish
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+
+      - name: docker push
+        run: |
+          set -eo pipefail
+          docker build . -t sventschui/prometheus-osmetrics:${{ github.event.release.tag_name }}
+          docker push sventschui/prometheus-osmetrics:${{ github.event.release.tag_name }}
+
+      - name: git push
+        run: |
+          git push origin HEAD:master
+          git push --force origin "refs/tags/${{ github.event.release.tag_name }}"

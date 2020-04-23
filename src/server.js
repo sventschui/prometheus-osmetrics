@@ -10,6 +10,7 @@ const serializeMetrics = require('./metrics/serialize')
  * @property {string} osMetricApi
  * @property {string} osApi
  * @property {string} accessToken
+ * @property {import('pino').Logger} logger
  */
 
 /**
@@ -20,10 +21,11 @@ module.exports = function createServer ({
   concurrency = 10,
   osMetricApi,
   osApi,
-  accessToken
+  accessToken,
+  logger
 }) {
   const server = fastify({
-    logger: true,
+    logger,
     ...fastifyOptions
   })
 
@@ -39,10 +41,9 @@ module.exports = function createServer ({
       schema: {
         querystring: {
           type: 'object',
-          required: [],
+          required: ["namespace"],
           properties: {
             namespace: {
-              // TODO: make required
               oneOf: [
                 { type: 'string', minLength: 1 },
                 {
