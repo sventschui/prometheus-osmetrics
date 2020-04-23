@@ -6,7 +6,8 @@ const https = require('https')
  * @property {string} osApi
  * @property {string} osMetricApi
  * @property {string} accessToken
- * @property {(import('https').Agent|null)} agent
+ * @property {?import('https').Agent} agent
+ * @property {?Array<string>} defaultNamespace
  */
 
 /**
@@ -48,5 +49,11 @@ module.exports = async function collectSettings (env, logger) {
     })
   }
 
-  return { osApi, osMetricApi, accessToken, agent }
+  let defaultNamespace = null
+  if (env.OS_DEFAULT_NAMESPACE) {
+    defaultNamespace = env.OS_DEFAULT_NAMESPACE.split(',')
+    logger.info('Using default namespace %j', defaultNamespace)
+  }
+
+  return { osApi, osMetricApi, accessToken, agent, defaultNamespace }
 }

@@ -12,6 +12,7 @@ const serializeMetrics = require('./metrics/serialize')
  * @property {string} accessToken
  * @property {?import('https').Agent} agent
  * @property {import('pino').Logger} logger
+ * @property {?Array<string>} defaultNamespace
  */
 
 /**
@@ -24,7 +25,8 @@ module.exports = function createServer ({
   osApi,
   accessToken,
   agent,
-  logger
+  logger,
+  defaultNamespace
 }) {
   const server = fastify({
     logger,
@@ -43,7 +45,7 @@ module.exports = function createServer ({
       schema: {
         querystring: {
           type: 'object',
-          required: ['namespace'],
+          required: [],
           properties: {
             namespace: {
               oneOf: [
@@ -61,12 +63,18 @@ module.exports = function createServer ({
       }
     },
     async (req, reply) => {
+      let namespace = defaultNamespace
+
+      if (req.query.namespace) {
+        namespace = Array.isArray(req.query.namespace)
+          ? req.query.namespace
+          : [req.query.namespace]
+      }
+
       reply.send(
         serializeMetrics(
           await collectMetrics({
-            namespace: Array.isArray(req.query.namespace)
-              ? req.query.namespace
-              : [req.query.namespace],
+            namespace,
             concurrency,
             osMetricApi,
             osApi,

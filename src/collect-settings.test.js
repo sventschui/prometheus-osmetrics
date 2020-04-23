@@ -47,7 +47,8 @@ describe('collect-settings', () => {
       osApi: 'foo',
       osMetricApi: 'bar',
       accessToken: 'baz',
-      agent: null
+      agent: null,
+      defaultNamespace: null
     })
   })
 
@@ -67,7 +68,8 @@ describe('collect-settings', () => {
       osApi: 'foo',
       osMetricApi: 'bar',
       accessToken: 'baz',
-      agent: null
+      agent: null,
+      defaultNamespace: null
     })
   })
 
@@ -86,7 +88,8 @@ describe('collect-settings', () => {
       osApi: 'https://127.0.0.1',
       osMetricApi: 'bar',
       accessToken: 'baz',
-      agent: null
+      agent: null,
+      defaultNamespace: null
     })
   })
 
@@ -107,7 +110,48 @@ describe('collect-settings', () => {
       osApi: 'foo',
       osMetricApi: 'bar',
       accessToken: 'baz',
-      agent: expect.any(https.Agent)
+      agent: expect.any(https.Agent),
+      defaultNamespace: null
+    })
+  })
+
+  it('should support OS_DEFAULT_NAMESPACE with a single namespace', async () => {
+    expect(
+      await collectSettings(
+        {
+          OS_API: 'foo',
+          OS_METRIC_API: 'bar',
+          OS_ACCESS_TOKEN: 'baz',
+          OS_DEFAULT_NAMESPACE: 'foo'
+        },
+        logger
+      )
+    ).toMatchObject({
+      osApi: 'foo',
+      osMetricApi: 'bar',
+      accessToken: 'baz',
+      agent: null,
+      defaultNamespace: ['foo']
+    })
+  })
+
+  it('should support OS_DEFAULT_NAMESPACE with a multiple namespaces', async () => {
+    expect(
+      await collectSettings(
+        {
+          OS_API: 'foo',
+          OS_METRIC_API: 'bar',
+          OS_ACCESS_TOKEN: 'baz',
+          OS_DEFAULT_NAMESPACE: 'foo,bar'
+        },
+        logger
+      )
+    ).toMatchObject({
+      osApi: 'foo',
+      osMetricApi: 'bar',
+      accessToken: 'baz',
+      agent: null,
+      defaultNamespace: ['foo', 'bar']
     })
   })
 })
