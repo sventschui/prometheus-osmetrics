@@ -79,7 +79,8 @@ module.exports = function createServer ({
             osMetricApi,
             osApi,
             accessToken,
-            agent
+            agent,
+            logger: req.log
           })
         )
       )

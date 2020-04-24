@@ -19,6 +19,12 @@ module.exports = function parseMemory (memory) {
     }
   }
 
+  // try the suffix m (milli bytes)
+  match = memory.match(/^([0-9]+)m$/)
+  if (match) {
+    return parseInt(match[1], 10) / 1000
+  }
+
   // try the suffixes E, P, T, G, M, K, Ei, Pi, Ti, Gi, Mi, Ki
   const res = [
     /^([0-9]+)K(i?)$/,
@@ -32,7 +38,9 @@ module.exports = function parseMemory (memory) {
   for (let i = 0; i < res.length; i++) {
     match = memory.match(res[i])
     if (match) {
-      return parseInt(match[1]) * Math.pow(match[2] === 'i' ? 1024 : 1000, i)
+      return (
+        parseInt(match[1]) * Math.pow(match[2] === 'i' ? 1024 : 1000, i + 1)
+      )
     }
   }
 
