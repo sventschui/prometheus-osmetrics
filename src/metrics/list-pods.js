@@ -12,6 +12,19 @@ const fetch = require('node-fetch').default
 /**
  * @typedef {Object} ContainerSpec
  * @property {string} name
+ * @property {ContainerResourcesSpec} resources
+ */
+
+/**
+ * @typedef {Object} ContainerResourcesSpec
+ * @property {?ContainerResourceSpec} limits
+ * @property {?ContainerResourceSpec} requests
+ */
+
+/**
+ * @typedef {Object} ContainerResourceSpec
+ * @property {?(string|number)} cpu
+ * @property {?(string|number)} memory
  */
 
 /**
@@ -31,13 +44,19 @@ const fetch = require('node-fetch').default
  * @property {string} osApi
  * @property {string} accessToken
  * @property {string} namespace
+ * @property {?import('https').Agent} agent
  */
 
 /**
  * @param {Options} options
  * @returns {Promise<Array<PodInfo>>}
  */
-module.exports = async function listPods ({ osApi, accessToken, namespace }) {
+module.exports = async function listPods ({
+  osApi,
+  accessToken,
+  namespace,
+  agent
+}) {
   const response = await fetch(
     `${osApi}/api/v1/namespaces/${encodeURIComponent(namespace)}/pods`,
     {
@@ -45,7 +64,8 @@ module.exports = async function listPods ({ osApi, accessToken, namespace }) {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         Accept: 'application/json'
-      }
+      },
+      agent
     }
   )
 

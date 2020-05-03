@@ -39,7 +39,8 @@ describe('list-pods', () => {
     const pods = await listPods({
       osApi,
       accessToken,
-      namespace
+      namespace,
+      agent: null
     })
 
     expect(pods).toHaveProperty('length', 1)
@@ -68,7 +69,8 @@ describe('list-pods', () => {
       listPods({
         osApi,
         accessToken,
-        namespace
+        namespace,
+        agent: null
       })
     ).rejects.toHaveProperty(
       'message',
@@ -95,7 +97,8 @@ describe('list-pods', () => {
       listPods({
         osApi,
         accessToken,
-        namespace
+        namespace,
+        agent: null
       })
     ).rejects.toHaveProperty(
       'message',
@@ -121,7 +124,8 @@ describe('list-pods', () => {
       listPods({
         osApi,
         accessToken,
-        namespace
+        namespace,
+        agent: null
       })
     ).rejects.toHaveProperty(
       'message',
@@ -147,7 +151,8 @@ describe('list-pods', () => {
       listPods({
         osApi,
         accessToken,
-        namespace
+        namespace,
+        agent: null
       })
     ).rejects.toHaveProperty(
       'message',
@@ -173,7 +178,8 @@ describe('list-pods', () => {
       listPods({
         osApi,
         accessToken,
-        namespace
+        namespace,
+        agent: null
       })
     ).rejects.toHaveProperty(
       'message',
@@ -199,7 +205,8 @@ describe('list-pods', () => {
       listPods({
         osApi,
         accessToken,
-        namespace
+        namespace,
+        agent: null
       })
     ).rejects.toHaveProperty(
       'message',
