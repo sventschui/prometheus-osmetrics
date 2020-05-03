@@ -89,4 +89,34 @@ foo{foo="bar", bar="baz"} 123 1234567
 # lines
 bar{hello="world"} 456 12345678`)
   })
+
+  it('should de-duplicate comments', () => {
+    expect(
+      serialize([
+        {
+          name: 'foo',
+          value: 123,
+          labels: { foo: 'bar', bar: 'baz' },
+          timestamp: 1234567,
+          type: 'gauge',
+          help: 'foo help text',
+          comment: 'this \n is a comment'
+        },
+        {
+          name: 'foo',
+          value: 123,
+          labels: { foo: 'bar', bar: 'baz2' },
+          timestamp: 1234567,
+          type: 'gauge',
+          help: 'foo help text',
+          comment: 'this \n is a comment'
+        }
+      ])
+    ).toEqual(`# HELP foo foo help text
+# TYPE foo gauge
+# this
+# is a comment
+foo{foo="bar", bar="baz"} 123 1234567
+foo{foo="bar", bar="baz2"} 123 1234567`)
+  })
 })

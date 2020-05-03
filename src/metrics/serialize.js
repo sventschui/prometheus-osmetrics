@@ -15,24 +15,33 @@ const serializeLabels = require('./serialize-labels')
  * @param {Array<PrometheusMetric>} [metrics]
  */
 module.exports = function (metrics) {
+  /**
+   * @type Array<string>
+   */
+  const emittedComments = [];
+
   return metrics.reduce((accum, metric, index) => {
     const labels =
       metric.labels != null ? `{${serializeLabels(metric.labels)}}` : ''
 
     let comments = ''
 
-    if (metric.help != null) {
-      comments += `# HELP ${metric.name} ${metric.help}\n`
-    }
+    if (emittedComments.indexOf(metric.name) === -1) {
+      if (metric.help != null) {
+        comments += `# HELP ${metric.name} ${metric.help}\n`
+      }
 
-    if (metric.type != null) {
-      comments += `# TYPE ${metric.name} ${metric.type}\n`
-    }
+      if (metric.type != null) {
+        comments += `# TYPE ${metric.name} ${metric.type}\n`
+      }
 
-    if (metric.comment != null) {
-      metric.comment.split('\n').forEach(line => {
-        comments += `# ${line.trim()}\n`
-      })
+      if (metric.comment != null) {
+        metric.comment.split('\n').forEach(line => {
+          comments += `# ${line.trim()}\n`
+        })
+      }
+
+      emittedComments.push(metric.name);
     }
 
     const timestamp = metric.timestamp != null ? ` ${metric.timestamp}` : ''
